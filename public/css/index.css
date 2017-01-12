@@ -1,0 +1,28 @@
+body {
+  background-color:#000;
+  background-image:url(../images/login-newbg.png);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position:center;
+}
+
+#entrance {
+  position:absolute;
+  background:rgba(0,0,0,0.0);
+  left: 42%;
+  top: 45%;
+  height: 5%;
+  width: 16%;
+}
+
+input {
+  background:rgba(30,30,30,0.8);
+  color:white;
+  border: 0px;
+	padding: 0 5px;
+	font-size: 24px;
+	font-weight: bold;
+	font-family:微軟正黑體;
+	height: 100%;
+	width: 100%;
+}

@@ -1,0 +1,59 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>房間</title>
+  <link rel='stylesheet' type='text/css' href='/css/room.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  
+  <script>
+	  var request = function(method, uri, arrive){
+      $.ajax({
+          type : method,
+          dataType: "json",
+          url: window.location.origin+uri,
+          contentType : 'application/json',
+          success : function(msg, status, xhr){
+            if(msg.statusCode===200){
+              alert(JSON.stringify(msg.message));
+              return window.location.pathname=arrive;
+            }
+            alert(msg.message);
+            $("#errorInput").show();
+          },
+          error : function(xhr, ajaxOptions, thrownError){ 
+            alert(xhr.status); 
+            alert(ajaxOptions);
+            alert(thrownError); 
+          }
+        });
+    }
+    $(document).ready(function(){
+		  $("#leaveBtn").click(function(){
+        request("post","/room/leave","/room");
+		  });
+      $("#startBtn").click(function(){
+        request("post","/room/start","/game");
+		  });
+    });
+	</script>
+</head>
+
+<body>
+  <form >
+  <div>
+    <input type="button" id="startBtn" value="開始遊戲">
+  </div>
+  <div >
+    <input type="button" id="leaveBtn" value="離開房間">
+  </div>
+  <div>
+	  <label id="errorInput" hidden="hidden">不符合開啟遊戲條件!!</label>
+	</div>
+
+  <div id="messages"></div>
+  
+  </form>
+</body>
+
+</html>

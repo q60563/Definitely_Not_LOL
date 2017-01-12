@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>房間</title>
+    <link rel='stylesheet' type='text/css' href='/css/room.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
+    <script>
+      // var wsUrl = 'ws://127.0.0.1:8000/room/enter';
+      var wsUrl = 'ws://'+window.location.hostname+':8000/room/enter';
+      var websocket = new WebSocket(wsUrl);
+
+      websocket.onopen = function(evt) {
+        console.log('Connected');
+        websocket.send("");
+      };
+
+      websocket.onclose = function(evt) {
+        console.log('DisConnected');
+      };
+
+      websocket.onmessage = function(evt) {
+        console.log('Got Message');
+        console.log(JSON.parse(evt.data).owner);
+        if(JSON.parse(evt.data).owner!=""){
+          document.getElementById('owner').innerText = JSON.parse(evt.data).owner;
+        }else{
+          document.getElementById('owner').innerText = "";
+        }
+        if(JSON.parse(evt.data).player!=""){
+          document.getElementById('player').innerText = JSON.parse(evt.data).player;
+        }else{
+          document.getElementById('player').innerText = "";
+        }
+
+        if(JSON.parse(evt.data).pathname!=undefined){
+          window.location.pathname=JSON.parse(evt.data).pathname;
+        }
+      };
+
+      websocket.onerror = function(evt) {
+        console.log('Something\'s wrong');
+      };
+
+	    var request = function(method, uri, arrive){
+      $.ajax({
+          type : method,
+          dataType: "json",
+          url: window.location.origin+uri,
+          contentType : 'application/json',
+          success : function(msg, status, xhr){
+            if(msg.statusCode===200){
+              // alert(JSON.stringify(msg.message));
+              if(uri=="/room/start") websocket.send(arrive);
+              if(uri=="/room/leave") {
+                websocket.send("");
+                var backHall = function(){window.location.pathname="/room"};
+                setTimeout(backHall,10);
+              }
+            }
+            // alert(msg.message);
+            $("#errorInput").show();
+          },
+          error : function(xhr, ajaxOptions, thrownError){ 
+            alert(xhr.status); 
+            // alert(ajaxOptions);
+            // alert(thrownError); 
+          }
+        });
+      }
+
+      $(document).ready(function(){
+        $("#leaveBtn").click(function(){
+          request("post","/room/leave","/room");
+        });
+        $("#startBtn").click(function(){
+          request("post","/room/start","/game");
+        });
+      });
+	  </script>
+  </head>
+  <body id="test">
+    <form >
+      <div id="startBtnArea">
+        <input type="button" id="startBtn" value="開始遊戲">
+      </div>
+      <div id="leaveBtnArea">
+        <input type="button" id="leaveBtn" value="離開房間">
+      </div>
+      <div id="errorInputArea">
+        <label id="errorInput" hidden="hidden">不符合開啟遊戲條件!!</label>
+      </div>
+
+    </form>
+
+    <table id="listArea" width="550" border="1">
+      <tr>
+        <th id="ownertitle">owner</th>
+        <th id="playertitle">player</th>
+      </tr>
+
+      <tr align="center">
+        <td id="owner"></td>
+        <td id="player"></td>
+      </tr>
+    </table>
+  </body>
+</html>

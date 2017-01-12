@@ -1,0 +1,75 @@
+		body {
+			background-color:#000;
+			background-image:url(../images/login-newbg.png);
+			background-repeat:no-repeat;
+			background-attachment:fixed;
+			background-position:center;
+		}
+		input {
+			background:rgba(10,10,10,0.7);
+			color:white;
+			border: 0px;
+			padding: 0 5px;
+			font-size: 24px;
+			font-weight: bold;
+			font-family:微軟正黑體;
+			height: 100%;
+			width: 100%;
+		}
+		input.btn {
+			background:rgba(30,30,30,0.8);
+			position: absolute;
+			margin: 0px;
+		}
+		label {
+			background:rgba(10,10,10,0.7);
+			color:red;
+			border: 0px;
+			padding: 0 5px;
+			font-size: 18px;
+			font-weight: bold;
+			font-family:微軟正黑體;
+			margin: 0 20%;
+			height: 100%;
+			width: 70%;
+		}
+		#enter {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+			left: 42%;
+			top: 35%;
+			height: 5%;
+			width: 16%;
+		}
+		#logout {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+			left: 42%;
+			top: 45%;
+			height: 5%;
+			width: 16%;
+		}
+		#refresh {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+			left: 42%;
+			top: 55%;
+			height: 5%;
+			width: 16%;
+		}
+		#record {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+			left: 42%;
+			top: 65%;
+			height: 5%;
+			width: 16%;
+		}
+		#rename {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+			left: 42%;
+			top: 75%;
+			height: 5%;
+			width: 16%;
+		}

@@ -1,0 +1,489 @@
+body {
+			background-color:#000;
+			background-image:url(../images/map.png);
+			background-repeat:no-repeat;
+			height: 1019px;
+			width: 1920px;
+			margin: 0;
+		}
+		img {
+			position:absolute;
+			background:rgba(0,0,0,0.0);
+		}
+		input {
+			color:white;
+			border: 0px;
+			padding: 0 5px;
+			font-size: 20px;
+			font-weight: bold;
+			font-family:微軟正黑體;
+			height: 100%;
+			width: 100%;
+		}
+		label {
+			color:white;
+			border: 0px;
+			padding: 0 5px;
+			font-size: 20px;
+			font-weight: bold;
+			font-family:微軟正黑體;
+			height: 30px;
+			width: 100%;
+		}
+		input.text {
+			background:rgba(20,20,20,0.5);
+			position: absolute;
+			margin: 0px;
+		}
+		input.ListBtn {
+			background:rgba(30,30,30,0.3);
+			position: absolute;
+			margin: 0px;
+			width: 250px;
+			height: 90px;
+		}
+		input.btnSkill {
+			background:rgba(30,30,30,0.3);
+			border: 2px solid #ffffff;
+			position: absolute;
+			margin: 0px;
+		}
+		input.btnStatus {
+			background:rgba(30,30,30,0.3);
+			border: 2px solid #ffffff;
+			position: absolute;
+			margin: 0px;
+		}
+		input.mapBtn {
+			background:rgba(30,30,30,0.0);
+			position: absolute;
+			margin: 0px;
+		}
+		#menuArea {
+			position:fixed;
+			left:-250px;
+			height: 912px;
+			width: 455px;
+		}
+		#scrollL {
+			position:fixed;
+			left: calc(250px - 250px);
+			top: 5%;
+			height: 90px;
+			width: 250px;
+		}
+		#List {
+			background:rgba(30,30,30,0.8);
+			position:fixed;
+			height: 0px;
+			width: 250px;
+		}
+		#Weapon {
+			position:fixed;
+			left: calc(200px - 250px);
+			top: calc(5% + 100px);
+			height: 90px;
+			width: 250px;
+		}
+		#WeaponPB {
+			position: absolute;
+			height: 90px;
+			width: 250px;
+		}
+		#WeaponPBar,#pushLPBar,#CCPBar,#UltPBar {
+			background:rgba(30,30,30,0.6);
+			right: 0px;
+			top: 0px;
+			height: 90px;
+			width: 250px;
+		}
+		#pushL {
+			position:fixed;
+			left: calc(150px - 250px);
+			top: calc(5% + 200px);
+			height: 90px;
+			width: 250px;
+		}
+		#pushLPB {
+			position: absolute;
+			height: 90px;
+			width: 250px;
+		}
+		#CC {
+			position:fixed;
+			left: calc(100px - 250px);
+			top: calc(5% + 300px);
+			height: 90px;
+			width: 250px;
+		}
+		#CCPB {
+			position: absolute;
+			height: 90px;
+			width: 250px;
+		}
+		#Ult {
+			position:fixed;
+			left: calc(50px - 250px);
+			top: calc(5% + 400px);
+			height: 90px;
+			width: 250px;
+		}
+		#UltPB {
+			position: absolute;
+			height: 90px;
+			width: 250px;
+		}
+		#giveUp {
+			position:fixed;
+			left: calc(0px - 250px);
+			top: calc(5% + 500px);
+			height: 90px;
+			width: 250px;
+		}
+		#ListEAvatar,#ListEHero,#ListWild {
+			height: 90px;
+			width: 250px;
+		}
+		#statusArea {
+			position:fixed;
+			right: -250px;
+			bottom: 0%;
+			height: 912px;
+			width: 455px;
+		}
+		#StatusList {
+			background:rgba(30,30,30,0.8);
+			position:fixed;
+			height: 0px;
+			width: 300px;
+		}
+		#statusImg {
+			position:static;
+			height: 300px;
+			width: 300px;
+		}
+		#scrollR {
+			position:fixed;
+			right: 0px;
+			bottom: 5%;
+			height: 90px;
+			width: 300px;
+		}
+		#areaData {
+			position:fixed;
+			right: -50px;
+			bottom: calc(5% + 100px);
+			height: 90px;
+			width: 300px;
+		}
+		#nameDataArea {
+			height: 30px;
+			width: 100%;
+		}
+		#storyDataArea {
+			height: 270px;
+			width: 100%;
+		}
+		#areaEnemy {
+			position:fixed;
+			right: -100px;
+			bottom: calc(5% + 200px);
+			height: 90px;
+			width: 300px;
+		}
+		#map {
+			position:absolute;
+			left: 480px;
+			top: 45px;
+			height: 925px;
+			width: 910px;
+		}
+		#fbase {
+			position:absolute;
+			left: 465px;
+			top: 900px;
+			height: 90px;
+			width: 90px;
+		}
+		#fNexus {
+			position:absolute;
+			left: 535px;
+			top: 825px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-top1 {
+			position:absolute;
+			left: 455px;
+			top: 740px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-top2 {
+			position:absolute;
+			left: 505px;
+			top: 490px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-top3 {
+			position:absolute;
+			left: 455px;
+			top: 200px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-mid1 {
+			position:absolute;
+			left: 605px;
+			top: 755px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-mid2 {
+			position:absolute;
+			left: 740px;
+			top: 670px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-mid3 {
+			position:absolute;
+			left: 760px;
+			top: 535px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-bot1 {
+			position:absolute;
+			left: 625px;
+			top: 915px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-bot2 {
+			position:absolute;
+			left: 865px;
+			top: 855px;
+			height: 90px;
+			width: 90px;
+		}
+		#fTower-bot3 {
+			position:absolute;
+			left: 1105px;
+			top: 915px;
+			height: 90px;
+			width: 90px;
+		}
+		#ebase {
+			position:absolute;
+			left: 1320px;
+			top: 25px;
+			height: 90px;
+			width: 90px;
+		}
+		#eNexus {
+			position:absolute;
+			left: 1245px;
+			top: 105px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-top1 {
+			position:absolute;
+			left: 1160px;
+			top: 15px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-top2 {
+			position:absolute;
+			left: 890px;
+			top: 65px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-top3 {
+			position:absolute;
+			left: 620px;
+			top: 15px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-mid1 {
+			position:absolute;
+			left: 1175px;
+			top: 175px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-mid2 {
+			position:absolute;
+			left: 1040px;
+			top: 260px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-mid3 {
+			position:absolute;
+			left: 975px;
+			top: 435px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-bot1 {
+			position:absolute;
+			left: 1345px;
+			top: 190px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-bot2 {
+			position:absolute;
+			left: 1285px;
+			top: 490px;
+			height: 90px;
+			width: 90px;
+		}
+		#eTower-bot3 {
+			position:absolute;
+			left: 1345px;
+			top: 760px;
+			height: 90px;
+			width: 90px;
+		}
+		#fWolf {
+			position:absolute;
+			left: 630px;
+			top: 570px;
+			height: 90px;
+			width: 90px;
+		}
+		#fFrog {
+			position:absolute;
+			left: 560px;
+			top: 320px;
+			height: 90px;
+			width: 90px;
+		}
+		#fBlueB {
+			position:absolute;
+			left: 675px;
+			top: 430px;
+			height: 90px;
+			width: 90px;
+		}
+		#fRock {
+			position:absolute;
+			left: 750px;
+			top: 805px;
+			height: 90px;
+			width: 90px;
+		}
+		#fBird {
+			position:absolute;
+			left: 900px;
+			top: 660px;
+			height: 90px;
+			width: 90px;
+		}
+		#fRedB {
+			position:absolute;
+			left: 1030px;
+			top: 825px;
+			height: 90px;
+			width: 90px;
+		}
+		#eWolf {
+			position:absolute;
+			left: 1210px;
+			top: 350px;
+			height: 90px;
+			width: 90px;
+		}
+		#eFrog {
+			position:absolute;
+			left: 1240px;
+			top: 635px;
+			height: 90px;
+			width: 90px;
+		}
+		#eBlueB {
+			position:absolute;
+			left: 1115px;
+			top: 500px;
+			height: 90px;
+			width: 90px;
+		}
+		#eRock {
+			position:absolute;
+			left: 1040px;
+			top: 110px;
+			height: 90px;
+			width: 90px;
+		}
+		#eBird {
+			position:absolute;
+			left: 900px;
+			top: 300px;
+			height: 90px;
+			width: 90px;
+		}
+		#eRedB {
+			position:absolute;
+			left: 760px;
+			top: 130px;
+			height: 90px;
+			width: 90px;
+		}
+		#baron {
+			position:absolute;
+			left: 710px;
+			top: 300px;
+			height: 90px;
+			width: 90px;
+		}
+		#dragon {
+			position:absolute;
+			left: 1060px;
+			top: 665px;
+			height: 90px;
+			width: 90px;
+		}
+		.avatar {
+			position:absolute;
+			height: 90px;
+			width: 90px;
+		}
+		#eavatar {
+			position:absolute;
+			height: 90px;
+			width: 90px;
+		}
+		#AvatarData {
+			height: 200px;
+			width: 100%;
+		}
+		#AvatarPic {
+			position:static;
+			height: 170px;
+			width: 100%;
+		}
+		#EAvatarData {
+			height: 200px;
+			width: 100%;
+		}
+		#EAvatarPic {
+			position:static;
+			height: 170px;
+			width: 100%;
+		}
+		#WildData {
+			height: 200px;
+			width: 100%;
+		}
+		#WildPic {
+			position:static;
+			height: 170px;
+			width: 100%;
+		}

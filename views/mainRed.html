@@ -1,0 +1,1954 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>遊戲主畫面(紅方)</title>
+	<link rel='stylesheet' type='text/css' href='/css/main.css'>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	
+	<script>
+      var wsUrl = 'ws://'+window.location.hostname+':8000/game/mainRed';
+      var websocket = new WebSocket(wsUrl);
+			var temp3;
+			var temp4;
+
+      websocket.onopen = function(evt) {
+        console.log('Connected');
+        websocket.send("");
+      };
+
+      websocket.onclose = function(evt) {
+        console.log('DisConnected');
+      };
+
+      websocket.onmessage = function(evt) {
+				if((JSON.parse(evt.data).deadTower).indexOf("fNexus")!=-1 || (JSON.parse(evt.data).deadTower).indexOf("eNexus")!=-1){
+					return window.location.pathname="/room";
+				}else{
+					if(JSON.parse(evt.data).status=="changeEnemyPlayerStatus"){
+						temp3=JSON.parse(evt.data).enemyLocation + "M";
+						if(JSON.parse(evt.data).location!="spa"&&(JSON.parse(evt.data).enemyLocation==JSON.parse(evt.data).location || JSON.parse(evt.data).vision.indexOf(JSON.parse(evt.data).enemyLocation)!=-1)){
+							document.getElementById("EAvatarStatus").innerText="此區無敵方英雄";
+							if(JSON.parse(evt.data).enemyLocation==JSON.parse(evt.data).location){
+								$("#" + temp4).removeAttr("hidden");
+								temp4=JSON.parse(evt.data).enemyLocation + "M";
+								console.log("1");
+								$("#" + JSON.parse(evt.data).enemyLocation + "M").attr("hidden","hidden");
+								$("#avatarL").removeAttr("hidden");
+								$("#btn" + JSON.parse(evt.data).enemyLocation ).next().attr("hidden","hidden");
+								$("#" + JSON.parse(evt.data).enemyLocation + "B" ).attr("hidden","hidden");
+								$("#eavatar").css("top",$("#" + JSON.parse(evt.data).enemyLocation).css("top"));
+								$("#eavatar").css("left",$("#" + JSON.parse(evt.data).enemyLocation).css("left"));
+								$("#ListEAvatarPic").attr("src","/images/Khazix25090.png" );
+								$("#ListEAvatarBtn").attr("value","" );
+								$("#EAvatarPic").attr("src","/images/Khazix30090.png" );
+								document.getElementById("EAvatarStatus").innerText="『Khazix』 等級:"+JSON.parse(evt.data).data["rank"]+" 血量:"+JSON.parse(evt.data).data["blood"];
+							}else if(JSON.parse(evt.data).vision.indexOf(JSON.parse(evt.data).enemyLocation)!=-1){
+								console.log("2");
+								$("#avatarL").attr("hidden","hidden");
+								$("#" + temp4).removeAttr("hidden");
+								temp4=JSON.parse(evt.data).enemyLocation + "M";
+								$("#avatar").removeAttr("hidden");
+								$("#eavatar").removeAttr("hidden");
+								$("#" + JSON.parse(evt.data).enemyLocation + "M").attr("hidden","hidden");
+								$("#eavatar").css("top",$("#" + JSON.parse(evt.data).enemyLocation).css("top"));
+								$("#eavatar").css("left",$("#" + JSON.parse(evt.data).enemyLocation).css("left"));
+								$("#ListEAvatarPic").attr("src","/images/noone25090.png" );
+								$("#ListEAvatarBtn").attr("value","此區無敵方英雄" );
+								$("#EAvatarPic").attr("src","/images/noone30090.png" );
+								document.getElementById("EAvatarStatus").innerText="此區無敵方英雄";
+							}
+						}else{
+							 console.log("3");
+							$("#avatarL").attr("hidden","hidden");
+							$("#avatar").removeAttr("hidden");
+							$("#eavatar").attr("hidden","hidden");
+							$("#" + temp3).removeAttr("hidden");
+							$("#" + temp4).removeAttr("hidden");
+							$("#ListEAvatarPic").attr("src","/images/noone25090.png" );
+							$("#ListEAvatarBtn").attr("value","此區無敵方英雄" );
+							$("#EAvatarPic").attr("src","/images/noone30090.png" );
+						}
+					}
+
+
+				if(JSON.parse(evt.data).status=="changePlayerStatus"){
+					document.getElementById("AvatarStatus").innerText= "『Khazix』 等級:"+JSON.parse(evt.data).data["rank"]+" 血量:"+JSON.parse(evt.data).data["blood"];
+					if(JSON.parse(evt.data).data["status"]=="dead"){
+						$(".avatar").animate({top:$("#btneBase").parent().css("top"),left:$("#btneBase").parent().css("left")});
+						data = {
+							area : $("#btneBase").parent().attr("id"),
+							vision : [$("#btneBase").parent().attr("id"),"eNexus","eTower-top1","eTower-bot1"]
+						};
+						$(".iconBlack").removeAttr("hidden");
+						requestBtn(data,"post","/game/checkButton");
+					}else if(JSON.parse(evt.data).location=="eBase"){
+						$("#enexusB").attr("hidden","hidden");
+						$("#etowertop1B").attr("hidden","hidden");
+						$("#etowerbot1B").attr("hidden","hidden");
+					}
+				}
+				if(JSON.parse(evt.data).status=="changeEnemyWilderStatus"){
+					if(JSON.parse(evt.data).data["fWolf"]["status"]=="dead") $("#fWolfM").attr("src","/images/" + "NoraS.png");
+					else $("#fWolfM").attr("src","/images/" + "3wolfS.png");
+					if(JSON.parse(evt.data).data["fFrog"]["status"]=="dead") $("#fFrogM").attr("src","/images/" + "NoraS.png");
+					else $("#fFrogM").attr("src","/images/" + "frogS.png");
+					if(JSON.parse(evt.data).data["fBlueB"]["status"]=="dead") $("#fBlueBM").attr("src","/images/" + "NoraS.png");
+					else $("#fBlueBM").attr("src","/images/" + "BlueBS.png");
+					if(JSON.parse(evt.data).data["fRock"]["status"]=="dead") $("#fRockM").attr("src","/images/" + "NoraS.png");
+					else $("#fRockM").attr("src","/images/" + "2rockS.png");
+					if(JSON.parse(evt.data).data["fBird"]["status"]=="dead") $("#fBirdM").attr("src","/images/" + "NoraS.png");
+					else $("#fBirdM").attr("src","/images/" + "birdS.png");
+					if(JSON.parse(evt.data).data["fRedB"]["status"]=="dead") $("#fRedBM").attr("src","/images/" + "NoraS.png");
+					else $("#fRedBM").attr("src","/images/" + "redBS.png");
+
+					if(JSON.parse(evt.data).location=="fWolf"){
+						if(JSON.parse(evt.data).data["fWolf"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+							document.getElementById("WildStatus").innerText= "『雙頭野狼』　血量:"+JSON.parse(evt.data).data["fWolf"]["blood"];
+							$("#WildPic").attr("src","/images/" + "3wolf30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "3wolf25090.png");
+						}
+					}
+					if(JSON.parse(evt.data).location=="fFrog"){
+						if(JSON.parse(evt.data).data["fFrog"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『啾吉』　血量:"+JSON.parse(evt.data).data["fFrog"]["blood"];
+							$("#WildPic").attr("src","/images/" + "frog30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "frog25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="fBlueB"){
+						if(JSON.parse(evt.data).data["fBlueB"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『遠古魔像』　血量:"+JSON.parse(evt.data).data["fBlueB"]["blood"];
+							$("#WildPic").attr("src","/images/" + "blueB30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "blueB25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="fRock"){
+						if(JSON.parse(evt.data).data["fRock"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『巨石怪』　血量:"+JSON.parse(evt.data).data["fRock"]["blood"];
+							$("#WildPic").attr("src","/images/" + "2rock30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "2rock25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="fBird"){
+						if(JSON.parse(evt.data).data["fBird"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『火紅巨喙鳥』　血量:"+JSON.parse(evt.data).data["fBird"]["blood"];
+							$("#WildPic").attr("src","/images/" + "bird30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "bird25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="fRedB"){
+						if(JSON.parse(evt.data).data["fRedB"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『樹精長老』　血量:"+JSON.parse(evt.data).data["fRedB"]["blood"];
+							$("#WildPic").attr("src","/images/" + "redB30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "redB25090.png");
+						}
+					}
+				}
+				if(JSON.parse(evt.data).status=="changeWilderStatus"){
+					if(JSON.parse(evt.data).data["eWolf"]["status"]=="dead") $("#eWolfM").attr("src","/images/" + "NoraS.png");
+					else $("#eWolfM").attr("src","/images/" + "3wolfS.png");
+					if(JSON.parse(evt.data).data["eFrog"]["status"]=="dead") $("#eFrogM").attr("src","/images/" + "NoraS.png");
+					else $("#eFrogM").attr("src","/images/" + "frogS.png");
+					if(JSON.parse(evt.data).data["eBlueB"]["status"]=="dead") $("#eBlueBM").attr("src","/images/" + "NoraS.png");
+					else $("#eBlueBM").attr("src","/images/" + "BlueBS.png");
+					if(JSON.parse(evt.data).data["eRock"]["status"]=="dead") $("#eRockM").attr("src","/images/" + "NoraS.png");
+					else $("#eRockM").attr("src","/images/" + "2rockS.png");
+					if(JSON.parse(evt.data).data["eBird"]["status"]=="dead") $("#eBirdM").attr("src","/images/" + "NoraS.png");
+					else $("#eBirdM").attr("src","/images/" + "birdS.png");
+					if(JSON.parse(evt.data).data["eRedB"]["status"]=="dead") $("#eRedBM").attr("src","/images/" + "NoraS.png");
+					else $("#eRedBM").attr("src","/images/" + "redBS.png");
+
+					if(JSON.parse(evt.data).location=="eWolf"){
+						if(JSON.parse(evt.data).data["eWolf"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+							document.getElementById("WildStatus").innerText= "『雙頭野狼』　血量:"+JSON.parse(evt.data).data["eWolf"]["blood"];
+							$("#WildPic").attr("src","/images/" + "3wolf30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "3wolf25090.png");
+						}
+					}
+					if(JSON.parse(evt.data).location=="eFrog"){
+						if(JSON.parse(evt.data).data["eFrog"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『啾吉』　血量:"+JSON.parse(evt.data).data["eFrog"]["blood"];
+							$("#WildPic").attr("src","/images/" + "frog30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "frog25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="eBlueB"){
+						if(JSON.parse(evt.data).data["eBlueB"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『遠古魔像』　血量:"+JSON.parse(evt.data).data["eBlueB"]["blood"];
+							$("#WildPic").attr("src","/images/" + "blueB30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "blueB25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="eRock"){
+						if(JSON.parse(evt.data).data["eRock"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『巨石怪』　血量:"+JSON.parse(evt.data).data["eRock"]["blood"];
+							$("#WildPic").attr("src","/images/" + "2rock30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "2rock25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="eBird"){
+						if(JSON.parse(evt.data).data["eBird"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『火紅巨喙鳥』　血量:"+JSON.parse(evt.data).data["eBird"]["blood"];
+							$("#WildPic").attr("src","/images/" + "bird30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "bird25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="eRedB"){
+						if(JSON.parse(evt.data).data["eRedB"]["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『樹精長老』　血量:"+JSON.parse(evt.data).data["eRedB"]["blood"];
+							$("#WildPic").attr("src","/images/" + "redB30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "redB25090.png");
+						}
+					}
+				}
+				if(JSON.parse(evt.data).status=="changePublicWilderStatus"){
+					if(JSON.parse(JSON.parse(evt.data).data["baron"])["status"]=="dead") $("#baronM").attr("src","/images/" + "riverS.png");
+					else $("#baronM").attr("src","/images/" + "baronS.png");
+					if(JSON.parse(JSON.parse(evt.data).data["fireDragon"])["status"]=="dead") $("#dragonM").attr("src","/images/" + "riverS.png");
+					else $("#dragonM").attr("src","/images/" + "dragonS.png");
+
+					if(JSON.parse(evt.data).location=="baron"){
+						if(JSON.parse(JSON.parse(evt.data).data["baron"])["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『納什男爵』　血量:"+JSON.parse(JSON.parse(evt.data).data["baron"])["blood"];
+							$("#WildPic").attr("src","/images/" + "baron30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "baron25090.png");
+						}
+					}else if(JSON.parse(evt.data).location=="dragon"){
+						if(JSON.parse(JSON.parse(evt.data).data["fireDragon"])["status"]=="dead"){
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText= "此區無野怪或線上英雄";
+							$("#ListWildPic").attr("src","/images/noone25090.png" );
+							$("#ListWildBtn").attr("value","此區無野怪" );
+						}else{
+						document.getElementById("WildStatus").innerText= "『遠古赤龍』　血量:"+JSON.parse(JSON.parse(evt.data).data["fireDragon"])["blood"];
+							$("#WildPic").attr("src","/images/" + "dragon30090.png" );
+							$("#ListWildBtn").attr("value","" );
+							$("#ListWildPic").attr("src","/images/" + "dragon25090.png");
+						}
+					}
+				}
+				if(JSON.parse(evt.data).status=="changeEnemyMemberStatus"){
+					if(JSON.parse(evt.data).location=="fTower-top3" || JSON.parse(evt.data).location=="fTower-top2" || JSON.parse(evt.data).location=="fTower-top1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top3"))!=-1 && JSON.parse(evt.data).location=="fTower-top3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top2"))!=-1 && JSON.parse(evt.data).location=="fTower-top2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top1"))!=-1 && JSON.parse(evt.data).location=="fTower-top1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top3"))==-1 && JSON.parse(evt.data).location=="fTower-top3"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top3"))!=-1 && JSON.parse(evt.data).location=="fTower-top2"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-top2"))!=-1 && JSON.parse(evt.data).location=="fTower-top1"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-mid3" || JSON.parse(evt.data).location=="fTower-mid2" || JSON.parse(evt.data).location=="fTower-mid1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid3"))!=-1 && JSON.parse(evt.data).location=="fTower-mid3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid2"))!=-1 && JSON.parse(evt.data).location=="fTower-mid2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid1"))!=-1 && JSON.parse(evt.data).location=="fTower-mid1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid3"))==-1 && JSON.parse(evt.data).location=="fTower-mid3"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid3"))!=-1 && JSON.parse(evt.data).location=="fTower-mid2"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-mid2"))!=-1 && JSON.parse(evt.data).location=="fTower-mid1"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-bot3" || JSON.parse(evt.data).location=="fTower-bot2" || JSON.parse(evt.data).location=="fTower-bot1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot3"))!=-1 && JSON.parse(evt.data).location=="fTower-bot3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot2"))!=-1 && JSON.parse(evt.data).location=="fTower-bot2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot1"))!=-1 && JSON.parse(evt.data).location=="fTower-bot1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot3"))==-1 && JSON.parse(evt.data).location=="fTower-bot3"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot3"))!=-1 && JSON.parse(evt.data).location=="fTower-bot2"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("fTower-bot2"))!=-1 && JSON.parse(evt.data).location=="fTower-bot1"){
+								document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="fNexus" &&(((JSON.parse(evt.data).deadTower).indexOf("fTower-top1"))!=-1 || ((JSON.parse(evt.data).deadTower).indexOf("fTower-mid1"))!=-1 || ((JSON.parse(evt.data).deadTower).indexOf("fTower-bot1"))!=-1)){
+						document.getElementById("WildStatus").innerText= "『敵方英雄』　血量:"+JSON.parse(evt.data).data["nexus"]["blood"];
+					}
+				}
+				if(JSON.parse(evt.data).status=="changeMemberStatus"){
+					if(JSON.parse(evt.data).location=="eTower-top3" || JSON.parse(evt.data).location=="eTower-top2" || JSON.parse(evt.data).location=="eTower-top1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top3"))!=-1 && JSON.parse(evt.data).location=="eTower-top3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top2"))!=-1 && JSON.parse(evt.data).location=="eTower-top2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top1"))!=-1 && JSON.parse(evt.data).location=="eTower-top1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top3"))==-1 && JSON.parse(evt.data).location=="eTower-top3"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top3"))!=-1 && JSON.parse(evt.data).location=="eTower-top2"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-top2"))!=-1 && JSON.parse(evt.data).location=="eTower-top1"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["top"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-mid3" || JSON.parse(evt.data).location=="eTower-mid2" || JSON.parse(evt.data).location=="eTower-mid1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid3"))!=-1 && JSON.parse(evt.data).location=="eTower-mid3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid2"))!=-1 && JSON.parse(evt.data).location=="eTower-mid2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid1"))!=-1 && JSON.parse(evt.data).location=="eTower-mid1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid3"))==-1 && JSON.parse(evt.data).location=="eTower-mid3"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid3"))!=-1 && JSON.parse(evt.data).location=="eTower-mid2"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-mid2"))!=-1 && JSON.parse(evt.data).location=="eTower-mid1"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["middle"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-bot3" || JSON.parse(evt.data).location=="eTower-bot2" || JSON.parse(evt.data).location=="eTower-bot1"){
+						if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot3"))!=-1 && JSON.parse(evt.data).location=="eTower-bot3"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot2"))!=-1 && JSON.parse(evt.data).location=="eTower-bot2"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot1"))!=-1 && JSON.parse(evt.data).location=="eTower-bot1"){
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot3"))==-1 && JSON.parse(evt.data).location=="eTower-bot3"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot3"))!=-1 && JSON.parse(evt.data).location=="eTower-bot2"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}else if(((JSON.parse(evt.data).deadTower).indexOf("eTower-bot2"))!=-1 && JSON.parse(evt.data).location=="eTower-bot1"){
+								document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["under"]["blood"];
+							}
+						}
+					}else if(JSON.parse(evt.data).location=="eNexus" &&(((JSON.parse(evt.data).deadTower).indexOf("eTower-top1"))!=-1 || ((JSON.parse(evt.data).deadTower).indexOf("eTower-mid1"))!=-1 || ((JSON.parse(evt.data).deadTower).indexOf("eTower-bot1"))!=-1)){
+						document.getElementById("WildStatus").innerText= "『我方英雄』　血量:"+JSON.parse(evt.data).data["nexus"]["blood"];
+					}
+
+				}
+				if(JSON.parse(evt.data).status=="changeEnemyTowerStatus"){
+					if(JSON.parse(evt.data).data["fTower-top3"]["status"]=="dead") $("#fTower-top3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-mid3"]["status"]=="dead") $("#fTower-mid3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-bot3"]["status"]=="dead") $("#fTower-bot3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-top2"]["status"]=="dead") $("#fTower-top2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-mid2"]["status"]=="dead") $("#fTower-mid2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-bot2"]["status"]=="dead") $("#fTower-bot2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-top1"]["status"]=="dead") $("#fTower-top1M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-mid1"]["status"]=="dead") $("#fTower-mid1M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["fTower-bot1"]["status"]=="dead") $("#fTower-bot1M").attr("src","/images/" + "KaraS.png");
+
+					if(JSON.parse(evt.data).data["fTower-top3"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-top3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-top3"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-top2"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-top2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-top2"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-top1"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-top1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).data["fTower-mid3"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-mid3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-mid3"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-mid2"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-mid2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-mid2"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-mid1"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-mid1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).data["fTower-bot3"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-bot3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-bot3"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-bot2"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-bot2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["fTower-bot2"]["status"]=="dead" && JSON.parse(evt.data).data["fTower-bot1"]["status"]!="dead" && JSON.parse(evt.data).location=="fTower-bot1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).location=="fNexus" && (JSON.parse(evt.data).data["fTower-top1"]["status"]=="dead" || JSON.parse(evt.data).data["fTower-mid1"]["status"]=="dead"  || JSON.parse(evt.data).data["fTower-bot1"]["status"]=="dead")){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}	
+
+					if(JSON.parse(evt.data).location=="fTower-top3"){
+						if(JSON.parse(evt.data).data["fTower-top3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-top3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-mid3"){
+						if(JSON.parse(evt.data).data["fTower-mid3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-mid3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-bot3"){
+						if(JSON.parse(evt.data).data["fTower-bot3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-bot3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-top2"){
+						if(JSON.parse(evt.data).data["fTower-top2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-top2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-mid2"){
+						if(JSON.parse(evt.data).data["fTower-mid2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-mid2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-bot2"){
+						if(JSON.parse(evt.data).data["fTower-bot2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-bot2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-top1"){
+						if(JSON.parse(evt.data).data["fTower-top1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-top1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-mid1"){
+						if(JSON.parse(evt.data).data["fTower-mid1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-mid1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fTower-bot1"){
+						if(JSON.parse(evt.data).data["fTower-bot1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『敵方祕法防禦塔』 血量:"+JSON.parse(evt.data).data["fTower-bot1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="fNexus"){
+						document.getElementById("towerData").innerText= "『敵方祕法核心』　血量:"+JSON.parse(evt.data).data["fNexus"]["blood"];
+					}
+				}
+				if(JSON.parse(evt.data).status=="changeTowerStatus"){
+					if(JSON.parse(evt.data).data["eTower-top3"]["status"]=="dead") $("#eTower-top3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-mid3"]["status"]=="dead") $("#eTower-mid3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-bot3"]["status"]=="dead") $("#eTower-bot3M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-top2"]["status"]=="dead") $("#eTower-top2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-mid2"]["status"]=="dead") $("#eTower-mid2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-bot2"]["status"]=="dead") $("#eTower-bot2M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-top1"]["status"]=="dead") $("#eTower-top1M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-mid1"]["status"]=="dead") $("#eTower-mid1M").attr("src","/images/" + "KaraS.png");
+					if(JSON.parse(evt.data).data["eTower-bot1"]["status"]=="dead") $("#eTower-bot1M").attr("src","/images/" + "KaraS.png");
+
+					if(JSON.parse(evt.data).data["eTower-top3"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-top3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-top3"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-top2"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-top2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-top2"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-top1"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-top1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).data["eTower-mid3"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-mid3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-mid3"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-mid2"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-mid2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-mid2"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-mid1"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-mid1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).data["eTower-bot3"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-bot3"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-bot3"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-bot2"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-bot2"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}else if(JSON.parse(evt.data).data["eTower-bot2"]["status"]=="dead" && JSON.parse(evt.data).data["eTower-bot1"]["status"]!="dead" && JSON.parse(evt.data).location=="eTower-bot1"){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}
+					if(JSON.parse(evt.data).location=="eNexus" && (JSON.parse(evt.data).data["eTower-top1"]["status"]=="dead" || JSON.parse(evt.data).data["eTower-mid1"]["status"]=="dead"  || JSON.parse(evt.data).data["eTower-bot1"]["status"]=="dead")){
+						$("#WildPic").attr("src","/images/NormalHero30090.png" );
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png");
+					}	
+
+					if(JSON.parse(evt.data).location=="eTower-top3"){
+						if(JSON.parse(evt.data).data["eTower-top3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-top3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-mid3"){
+						if(JSON.parse(evt.data).data["eTower-mid3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-mid3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-bot3"){
+						if(JSON.parse(evt.data).data["eTower-bot3"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-bot3"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-top2"){
+						if(JSON.parse(evt.data).data["eTower-top2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-top2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-mid2"){
+						if(JSON.parse(evt.data).data["eTower-mid2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-mid2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-bot2"){
+						if(JSON.parse(evt.data).data["eTower-bot2"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-bot2"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-top1"){
+						if(JSON.parse(evt.data).data["eTower-top1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-top1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-mid1"){
+						if(JSON.parse(evt.data).data["eTower-mid1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-mid1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eTower-bot1"){
+						if(JSON.parse(evt.data).data["eTower-bot1"]["status"]=="dead"){
+							$("#statusImg").attr("src","/images/grass300300.png" );
+							document.getElementById("towerData").innerText="『平原』";
+							document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+							$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+							$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+							$("#WildPic").attr("src","/images/noone30090.png" );
+							document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						}else{
+							document.getElementById("towerData").innerText= "『祕法防禦塔』 血量:"+JSON.parse(evt.data).data["eTower-bot1"]["blood"];
+						}
+					}else if(JSON.parse(evt.data).location=="eNexus"){
+						document.getElementById("towerData").innerText= "『祕法核心』　血量:"+JSON.parse(evt.data).data["eNexus"]["blood"];
+					}
+				}
+
+				}
+
+      };
+
+      websocket.onerror = function(evt) {
+        console.log('Something\'s wrong');
+      };
+	</script>
+	
+	<script>
+		var AvatarHP = 600, eAvatarHP = 600;
+		var fTopHeroHP = 600, fMidHeroHP = 600, fBotHeroHP = 600, 
+			eTopHeroHP = 600, eMidHeroHP = 600, eBotHeroHP = 600;
+		var	fNexusHP = 5000, eNexusHP = 5000 ,TowerDisplayHP = 1000;
+		var	fTowertop1HP = 1000, fTowertop2HP = 1000, fTowertop3HP = 1000, fTowermid1HP = 1000, fTowermid2HP = 1000, fTowermid3HP = 1000, fTowerbot1HP = 1000, fTowerbot2HP = 1000, fTowerbot3HP = 1000;
+		var	eTowertop1HP = 1000, eTowertop2HP = 1000, eTowertop3HP = 1000, eTowermid1HP = 1000, eTowermid2HP = 1000, eTowermid3HP = 1000, eTowerbot1HP = 1000, eTowerbot2HP = 1000,eTowerbot3HP  = 1000;
+		var	fWolfHP = 250, fFrogHP = 250, fBlueBHP = 250, fRockHP = 250, fBirdHP = 250, fRedBHP = 250;
+		var	eWolfHP = 250, eFrogHP = 250, eBlueBHP = 250, eRockHP = 250, eBirdHP = 250, eRedBHP = 250;
+		var baronHP = 1200, dragonHP = 800;
+		var	WeaponCD = 2000 ,pushLCD = 2000 , CCCD = 3000 , UltCD = 8000;
+		var nowArea;
+		var requestBtn = function(data,method,uri){
+			$.ajax({
+				type : method,
+				dataType: "json",
+				url: window.location.origin+uri,
+				contentType : 'application/json',
+				data : JSON.stringify(data),
+				success : function(msg, status, xhr){
+					if(msg.statusCode===200){
+					}
+				},
+				error : function(xhr, ajaxOptions, thrownError){ 
+					// alert(xhr.status); 
+					// alert(ajaxOptions);
+					// alert(thrownError);
+				}
+			});
+		}
+		var requestCbt = function(data,method,uri){
+			$.ajax({
+				type : method,
+				dataType: "json",
+				url: window.location.origin+uri,
+				contentType : 'application/json',
+				data : JSON.stringify(data),
+				success : function(msg, status, xhr){
+					if(msg.statusCode===200){
+					}
+				},
+				error : function(xhr, ajaxOptions, thrownError){ 
+					// alert(xhr.status); 
+					// alert(ajaxOptions);
+					// alert(thrownError);
+				}
+			});
+		}
+		var request = function(data,method,uri){
+			$.ajax({
+				type : method,
+				dataType: "json",
+				url: window.location.origin+uri,
+				contentType : 'application/json',
+				data : JSON.stringify(data),
+				success : function(msg, status, xhr){
+				},
+				error : function(xhr, ajaxOptions, thrownError){ 
+				}
+			});
+		}
+		$(document).ready(function(){
+			$(".mapBtn").click(function(){
+				nowArea = $(this).parent().attr("id");
+				if (nowArea == "fTower-top2" || nowArea == "fTower-top1" ) {
+					nowArea = "fTower-top3";
+				}
+				else if (nowArea == "fTower-mid2" || nowArea == "fTower-mid1" ) {
+					nowArea = "fTower-mid3";
+				}
+				else if (nowArea == "fTower-bot2" || nowArea == "fTower-bot1" ) {
+					nowArea = "fTower-bot3";
+				}
+				var data;
+				$(".avatar").animate({top:$(this).parent().css("top"),left:$(this).parent().css("left")});
+
+				$("#ListWildPic").attr("src","/images/noone25090.png" );
+				$("#ListWildBtn").attr("value","此區無野怪" );
+				$("#ListEHeroPic").attr("src","/images/noone25090.png" );
+				$("#ListEHeroBtn").attr("value","此區無敵方線上英雄" );
+				$("#ListEAvatarPic").attr("src","/images/noone25090.png" );
+				$("#ListEAvatarBtn").attr("value","此區無敵方英雄" );
+				$("#WildPic").attr("src","/images/noone30090.png" );
+				document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+				$("#EAvatarPic").attr("src","/images/noone30090.png" );
+				document.getElementById("EAvatarStatus").innerText="此區無敵方英雄";
+
+				if (this.id=="btnfBase") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fNexus","fTower-top1","fTower-bot1"]
+					};
+					$(".iconBlack").removeAttr("hidden");
+					$("#fnexusB").attr("hidden","hidden");
+					$("#ftowertop1B").attr("hidden","hidden");
+					$("#ftowerbot1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfNexus") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top1","fTower-mid1","fTower-bot1"]
+					};
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowertop1B").attr("hidden","hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+					$("#ftowerbot1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-top1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top2","fTower-mid1","fNexus"]
+					};
+					TowerDisplayHP = fTowertop1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#fnexusB").attr("hidden","hidden");
+					$("#ftowertop2B").attr("hidden","hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-top2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top1","fTower-top3"]
+					};
+					TowerDisplayHP = fTowertop2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowertop1B").attr("hidden","hidden");
+					$("#ftowertop3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-top3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top2","eTower-top3","baron"]
+					};
+					TowerDisplayHP = fTowertop3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowertop2B").attr("hidden","hidden");
+					$("#etowertop3B").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-mid1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top1","fTower-mid2","fTower-bot1","fWolf","fRock"]
+					};
+					TowerDisplayHP = fTowermid1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#fnexusB").attr("hidden","hidden");
+					$("#ftowertop1B").attr("hidden","hidden");
+					$("#ftowermid2B").attr("hidden","hidden");
+					$("#ftowerbot1B").attr("hidden","hidden");
+					$("#fwolfB").attr("hidden","hidden");
+					$("#frockB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-mid2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-mid1","fTower-mid3"]
+					};
+					TowerDisplayHP = fTowermid2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+					$("#ftowermid3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-mid3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-mid2","eTower-mid3","baron","dragon"]
+					};
+					TowerDisplayHP = fTowermid3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowermid2B").attr("hidden","hidden");
+					$("#etowermid3B").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-bot1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-mid1","fTower-bot2","fNexus"]
+					};
+					TowerDisplayHP = fTowerbot1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#fnexusB").attr("hidden","hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+					$("#ftowerbot2B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-bot2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-bot1","fTower-bot3"]
+					};
+					TowerDisplayHP = fTowerbot2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowerbot1B").attr("hidden","hidden");
+					$("#ftowerbot3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfTower-bot3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-bot2","fTower-bot3","dragon"]
+					};
+					TowerDisplayHP = fTowerbot3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowerbot2B").attr("hidden","hidden");
+					$("#etowerbot3B").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfWolf") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-mid1","fFrog"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『雙頭野狼』　血量:" + fWolfHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+					$("#ffrogB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfFrog") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fWolf","fBlueB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『啾吉』　血量:" + fFrogHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#fwolfB").attr("hidden","hidden");
+					$("#fbluebB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfblueB") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fFrog","baron"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『遠古魔像』　血量:" + fBlueBHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ffrogB").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnf2rock") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-mid1","fBird"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『巨石怪』　血量:" + fRockHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowermid1B").attr("hidden","hidden");
+					$("#fbirdB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfBird") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fRock","fRedB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『火紅巨喙鳥』　血量:" + fBirdHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#frockB").attr("hidden","hidden");
+					$("#fredbB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnfRedB") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fBird","dragon"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『樹精長老』　血量:" + fRedBHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#fbirdB").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneBase") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eNexus","eTower-top1","eTower-bot1"]
+					};
+					$(".iconBlack").removeAttr("hidden");
+					$("#enexusB").attr("hidden","hidden");
+					$("#etowertop1B").attr("hidden","hidden");
+					$("#etowerbot1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneNexus") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-top1","eTower-mid1","eTower-bot1"]
+					};
+					$(".iconBlack").removeAttr("hidden");
+					$("#ebaseB").attr("hidden","hidden");
+					$("#etowertop1B").attr("hidden","hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+					$("#etowerbot1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-top1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-top2","eTower-mid1","eNexus"]
+					};
+					TowerDisplayHP = eTowertop1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ebaseB").attr("hidden","hidden");
+					$("#enexusB").attr("hidden","hidden");
+					$("#etowertop2B").attr("hidden","hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-top2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-top1","eTower-top3"]
+					};
+					TowerDisplayHP = eTowertop2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowertop1B").attr("hidden","hidden");
+					$("#etowertop3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-top3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-top2","fTower-top3","baron"]
+					};
+					TowerDisplayHP = eTowertop3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowertop2B").attr("hidden","hidden");
+					$("#ftowertop3B").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-mid1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-top1","eTower-mid2","eTower-bot1","eWolf","eRock"]
+					};
+					TowerDisplayHP = eTowermid1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#enexusB").attr("hidden","hidden");
+					$("#etowertop1B").attr("hidden","hidden");
+					$("#etowermid2B").attr("hidden","hidden");
+					$("#etowerbot1B").attr("hidden","hidden");
+					$("#ewolfB").attr("hidden","hidden");
+					$("#erockB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-mid2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-mid1","eTower-mid3"]
+					};
+					TowerDisplayHP = eTowermid2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+					$("#etowermid3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-mid3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-mid2","fTower-mid3","baron","dragon"]
+					};
+					TowerDisplayHP = eTowermid3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowermid2B").attr("hidden","hidden");
+					$("#ftowermid3B").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-bot1") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-mid1","eTower-bot2","eNexus"]
+					};
+					TowerDisplayHP = eTowerbot1HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#ebaseB").attr("hidden","hidden");
+					$("#enexusB").attr("hidden","hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+					$("#etowerbot2B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-bot2") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-bot1","eTower-bot3"]
+					};
+					TowerDisplayHP = eTowerbot2HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowerbot1B").attr("hidden","hidden");
+					$("#etowerbot3B").attr("hidden","hidden");
+				}
+				else if (this.id=="btneTower-bot3") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-bot2","eTower-bot3","dragon"]
+					};
+					TowerDisplayHP = eTowerbot3HP;
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowerbot2B").attr("hidden","hidden");
+					$("#ftowerbot3B").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneWolf") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-mid1","eFrog"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『雙頭野狼』　血量:" + eWolfHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+					$("#efrogB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneFrog") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eWolf","eBlueB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『啾吉』　血量:" + eFrogHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ewolfB").attr("hidden","hidden");
+					$("#ebluebB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneBlueB") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eFrog","dragon"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『遠古魔像』　血量:" + eBlueBHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#efrogB").attr("hidden","hidden");
+					$("#dragonB").attr("hidden","hidden");
+				}
+				else if (this.id=="btne2rock") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eTower-mid1","eBird"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『巨石怪』　血量:" + eRockHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#etowermid1B").attr("hidden","hidden");
+					$("#ebirdB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneBird") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eRock","eRedB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『火紅巨喙鳥』　血量:" + eBirdHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					else {
+						document.getElementById("WildStatus").innerText="此區無野怪或線上英雄";
+						$("#WildPic").attr("src","/images/noone30090.png" );
+						$("#ListWildPic").attr("src","/images/noone25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#erockB").attr("hidden","hidden");
+					$("#eredbB").attr("hidden","hidden");
+				}
+				else if (this.id=="btneRedB") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"eBird","dragon"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『樹精長老』　血量:" + eRedBHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ebirdB").attr("hidden","hidden");
+					$("#baronB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnBaron") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-top3","fTower-mid3","eTower-top3","eTower-mid3","fBlueB","eRedB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『納什男爵』　血量:" + baronHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowertop3B").attr("hidden","hidden");
+					$("#etowertop3B").attr("hidden","hidden");
+					$("#ftowermid3B").attr("hidden","hidden");
+					$("#etowermid3B").attr("hidden","hidden");
+					$("#eredbB").attr("hidden","hidden");
+					$("#fbluebB").attr("hidden","hidden");
+				}
+				else if (this.id=="btnDragon") {
+					data = {
+						area : $(this).parent().attr("id"),
+						vision : [$(this).parent().attr("id"),"fTower-bot3","fTower-mid3","eTower-bot3","eTower-mid3","eBlueB","fRedB"]
+					};
+					if ($(this).parent().attr("name") == "y") {
+						document.getElementById("WildStatus").innerText="『遠古赤龍』　血量:" + dragonHP;
+						$("#WildPic").attr("src","/images/" + this.name + "30090.png" );
+						$("#ListWildBtn").attr("value","" );
+						$("#ListWildPic").attr("src","/images/" + this.name + "25090.png")
+					}
+					$(".iconBlack").removeAttr("hidden");
+					$("#ftowerbot3B").attr("hidden","hidden");
+					$("#etowerbot3B").attr("hidden","hidden");
+					$("#ftowermid3B").attr("hidden","hidden");
+					$("#etowermid3B").attr("hidden","hidden");
+					$("#fredbB").attr("hidden","hidden");
+					$("#ebluebB").attr("hidden","hidden");
+				}
+				if (this.name == "2rock" ||
+					this.name == "3wolf" ||
+					this.name == "bird" ||
+					this.name == "frog" ||
+					this.name == "redB" ||
+					this.name == "blueB" ) {
+					$("#statusImg").attr("src","/images/jungle300300.png" );
+					document.getElementById("towerData").innerText="『叢林』";
+					document.getElementById("story").innerText="　　叢林中生存著許多無法在危險河道上立足的生物，就算被擊碎也能夠繼續襲擊『巨石怪』、蘊含劇毒的巨型蟾蜍『啾吉』、團體狩獵且攻擊性強烈『雙頭野狼』、食慾總是貪得無厭『火紅巨喙鳥』、龐大質量的危險身軀『遠古魔像』、身為樹精卻驅使著火焰『樹精長老』。他們都是對人類而言相當危險的存在。";
+				}
+				else if (this.name == "baron" ||
+						 this.name == "dragon") {
+					$("#statusImg").attr("src","/images/river300300.png" );
+					document.getElementById("towerData").innerText="『河道』";
+					document.getElementById("story").innerText="　　河道那片看似能夠孕育多樣生命的龐大水源，但事實上自古以來便是只有危險物種能夠盤據的地方，而其中最知名的莫過於令人聞之色變的遠古赤龍。因此穿越河道是一件令人卻步的恐懼挑戰……看！那裡有隻可愛的河蟹！";
+				}
+				else if (this.name == "base") {
+					$("#statusImg").attr("src","/images/base300300.png" );
+					if (this.id != "btnfBase") {
+						document.getElementById("towerData").innerText="『祕法基地』";
+					}
+					else {
+						document.getElementById("towerData").innerText="『敵方祕法基地』";
+					}
+					document.getElementById("story").innerText="　　位於祕法核心附近的地區被設置為基地，其能夠汲取數量龐大祕法來治癒友軍，也能夠用甚至媲美赤龍之火的祕法光線擊殺入侵基地之敵，不會有敵軍會想要踏進這裡一步的。";
+				}
+				else if (this.name == "nexus") {
+					$("#statusImg").attr("src","/images/nexus300300.png" );
+					document.getElementById("towerData").innerText="『祕法核心』";
+					
+					if (this.id != "btnfNexus") {
+						document.getElementById("towerData").innerText="『祕法核心』　血量:" + fNexusHP;
+					}
+					else {
+						document.getElementById("towerData").innerText="『敵方祕法核心』　血量:" + eNexusHP;
+					}
+					document.getElementById("story").innerText="　　祕法做為文明最為主要的能量，因此蘊含豐沛祕法的祕法核心周遭，總是會成為腥風血雨的戰爭之地。沒有人知道祕法的來源為何，只知道其具有難以估量的價值，往往卻忽略祕法的本質。";
+				}
+				else if (this.name == "broken") {
+					$("#statusImg").attr("src","/images/grass300300.png" );
+					document.getElementById("towerData").innerText="『平原』";
+					document.getElementById("story").innerText="　　也許只是人們開墾的普通道路，又或許是過去做為戰爭前線的流血戰場……然而如今此處除去雜草叢生外便一無所有，正適合當做正午野餐的好地方！";
+				}
+				else {
+					$("#statusImg").attr("src","/images/tower300300.png" );
+					if ($(this).parent().attr("name") != "e") {
+						document.getElementById("towerData").innerText="『敵方祕法防禦塔』 血量:" + TowerDisplayHP;
+					}
+					else {
+						document.getElementById("towerData").innerText="『祕法防禦塔』 血量:" + TowerDisplayHP;
+					}
+					document.getElementById("story").innerText="　　為讓人們能夠安心的行走於道路上，擁有著強大力量的防禦塔便因此誕生，不但堅硬還能夠發射超酷的祕法光線。平時只要有祕法防禦塔在身旁總能放心……但是當戰士們在戰場上看見祕法防禦塔總是為之顫抖。";
+				}
+				var efHero;
+				if (this.name == "NormalHero") {
+					$("#WildPic").attr("src","/images/NormalHero30090.png" );
+					if ($(this).parent().attr("name") != "e") {
+						efHero = "『敵方英雄』　";
+						$("#ListEHeroBtn").attr("value","" );
+						$("#ListEHeroPic").attr("src","/images/NormalHero25090.png")
+					}
+					else {
+						efHero = "『我方英雄』　";
+						$("#ListEHeroPic").attr("src","/images/noone25090.png")
+					}
+					if ($(this).prev().attr("name") == "ftop") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + fTopHeroHP;
+					}
+					else if ($(this).prev().attr("name") == "fmid") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + fMidHeroHP;
+					}
+					else if ($(this).prev().attr("name") == "fbot") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + fBotHeroHP;
+					}
+					else if ($(this).prev().attr("name") == "etop") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + eTopHeroHP;
+					}
+					else if ($(this).prev().attr("name") == "emid") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + eMidHeroHP;
+					}
+					else if ($(this).prev().attr("name") == "ebot") {
+						document.getElementById("WildStatus").innerText= efHero + "血量:" + eBotHeroHP;
+					}
+				}
+				requestBtn(data,"post","/game/checkButton");
+			});
+			var temp,skillchk,chk=0;
+			$(".btnSkill").click(function(){
+				if (this.id == "BtnScrollL")
+				{
+					$("#List").css("height","0px");
+					$("#ListAll").attr("hidden","hidden");
+					if (this.name == "N") {
+						$("#menuArea").animate({left:"0px"});
+						$("#scrollL").animate({left:"250px"});
+						$("#Weapon").animate({left:"200px"});
+						$("#pushL").animate({left:"150px"});
+						$("#CC").animate({left:"100px"});
+						$("#Ult").animate({left:"50px"});
+						$("#giveUp").animate({left:"0px"});
+						$("#LLeft").removeAttr("hidden");
+						this.name = "Y";
+						this.value = "收縮列表";
+					}
+					else {
+						$("#menuArea").animate({left:"-250px"});
+						$("#scrollL").animate({left:"0px"});
+						$("#Weapon").animate({left:"-50px"});
+						$("#pushL").animate({left:"-100px"});
+						$("#CC").animate({left:"-150px"});
+						$("#Ult").animate({left:"-200px"});
+						$("#giveUp").animate({left:"-250px"});
+						$("#LLeft").attr("hidden","hidden");
+						this.name = "N";
+						this.value = "擴展列表";
+					}
+				}
+				else if (this.id == "BtnGU") {
+					alert("嫩");
+					request("","get","/game/surrender");
+				}
+				else {
+					skillchk = $(this).next().attr("id");
+					if ($("#List").attr("hidden")=="hidden") {
+						$("#List").removeAttr("hidden");
+						$("#ListAll").removeAttr("hidden");
+						$("#List").css("top","calc(" + $(this).parent().css("top") + " + 90px");
+						$("#List").css("left",$(this).parent().css("left"));
+						$("#List").animate({height:"270px"});
+					}
+					else if (this.id == temp) {
+						if (chk==0) {
+							$("#List").animate({height:"0px"});
+							$("#ListAll").attr("hidden","hidden");
+							chk++;
+						}
+						else {
+							chk=0;
+							$("#ListAll").removeAttr("hidden");
+							$("#List").css("top","calc(" + $(this).parent().css("top") + " + 90px");
+							$("#List").css("left",$(this).parent().css("left"));
+							$("#List").animate({height:"270px"});
+						}
+					}	
+					else {
+						$("#ListAll").removeAttr("hidden");
+						$("#List").css("height","0px");
+						$("#List").css("top","calc(" + $(this).parent().css("top") + " + 90px");
+						$("#List").css("left",$(this).parent().css("left"));
+						$("#List").animate({height:"270px"});
+					}
+				}
+				temp = this.id;
+			});
+			$(".ListBtn").click(function(){
+				if ($(this).prev().attr("src") == "/images/noone25090.png") {
+				}
+				else {
+					$("#" + skillchk).removeAttr("hidden");
+					$("#List").animate({height:"0px"});
+					$("#ListAll").attr("hidden","hidden");
+					$("#List").animate({height:"0px"});
+					$("#" + skillchk + "ar").css("width","250px");
+					if (skillchk == "WeaponPB") {
+						if (this.id == "ListWildBtn") {
+							data = {
+								skills : "Q",
+								target : "Wild",
+								area : nowArea
+							};
+						}
+						else if (this.id == "ListEHeroBtn") {
+							data = {
+								skills : "Q",
+								target : "EHeroBtn",
+								area : nowArea
+							};
+						}
+						else {
+							data = {
+								skills : "Q",
+								target : "EAvatar",
+								area : nowArea
+							};
+						}
+						$("#WeaponPBar").animate({width:"0px"},WeaponCD,function(){
+							$("#WeaponPB").attr("hidden","hidden");
+						});
+					}
+					else if (skillchk == "pushLPB") {
+						if (this.id == "ListWildBtn") {
+							data = {
+								skills : "W",
+								target : "Wild",
+								area : nowArea
+							};
+						}
+						else if (this.id == "ListEHeroBtn") {
+							data = {
+								skills : "W",
+								target : "EHeroBtn",
+								area : nowArea
+							};
+						}
+						else {
+							data = {
+								skills : "W",
+								target : "EAvatar",
+								area : nowArea
+							};
+						}
+						$("#pushLPBar").animate({width:"0px"},pushLCD,function(){
+							$("#pushLPB").attr("hidden","hidden");
+						});
+					}
+					else if (skillchk == "CCPB") {
+						if (this.id == "ListWildBtn") {
+							data = {
+								skills : "E",
+								target : "Wild",
+								area : nowArea
+							};
+						}
+						else if (this.id == "ListEHeroBtn") {
+							data = {
+								skills : "E",
+								target : "EHeroBtn",
+								area : nowArea
+							};
+						}
+						else {
+							data = {
+								skills : "E",
+								target : "EAvatar",
+								area : nowArea
+							};
+						}
+						$("#CCPBar").animate({width:"0px"},CCCD,function(){
+							$("#CCPB").attr("hidden","hidden");
+						});
+					}
+					else {
+						if (this.id == "ListWildBtn") {
+							data = {
+								skills : "R",
+								target : "Wild",
+								area : nowArea
+							};
+						}
+						else if (this.id == "ListEHeroBtn") {
+							data = {
+								skills : "R",
+								target : "EHeroBtn",
+								area : nowArea
+							};
+						}
+						else {
+							data = {
+								skills : "R",
+								target : "EAvatar",
+								area : nowArea
+							};
+						}
+						$("#UltPBar").animate({width:"0px"},UltCD,function(){
+							$("#UltPB").attr("hidden","hidden");
+						});
+					}
+					requestCbt(data,"post","/game/checkCombat");
+				}
+			});
+			var temp2,chk2=0;
+			$(".btnStatus").click(function(){
+				if (this.id == "BtnScrollR")
+				{
+					$("#StatusList").css("height","0px");
+					$("#StatusAll").attr("hidden","hidden");
+					$("#StatusAll2").attr("hidden","hidden");
+					if (this.name == "N") {
+						$("#statusArea").animate({right:"0px"});
+						$("#scrollR").animate({right:"250px"});
+						$("#AreaData").animate({right:"150px"});
+						$("#AreaEnemy").animate({right:"50px"});
+						$("#RRight").removeAttr("hidden");
+						this.name = "Y";
+						this.value = "收縮列表";
+					}
+					else {
+						$("#statusArea").animate({right:"-250px"});
+						$("#scrollR").animate({right:"0px"});
+						$("#AreaData").animate({right:"-50px"});
+						$("#AreaEnemy").animate({right:"-100px"});
+						$("#RRight").attr("hidden","hidden");
+						this.name = "N";
+						this.value = "擴展列表";
+					}
+				}
+				else {
+					if ($("#StatusList").attr("hidden")=="hidden") {
+						$("#StatusList").removeAttr("hidden");
+						if (this.id == "BtnAD") {
+							$("#StatusAll2").attr("hidden","hidden");
+							$("#StatusAll").removeAttr("hidden");
+						}
+						else {
+							$("#StatusAll").attr("hidden","hidden");
+							$("#StatusAll2").removeAttr("hidden");
+						}
+						$("#StatusList").css("bottom","calc(" + $(this).parent().css("bottom") + " + 90px")
+						$("#StatusList").css("right",$(this).parent().css("right"))
+						$("#StatusList").animate({height:"600px"});
+					}
+					else if (this.id == temp2) {
+						if (chk2==0) {
+							$("#StatusList").animate({height:"0px"});
+							$("#StatusAll").attr("hidden","hidden");
+							$("#StatusAll2").attr("hidden","hidden");
+							chk2++;
+						}
+						else {
+							chk2=0;
+							if (this.id == "BtnAD") {
+								$("#StatusAll2").attr("hidden","hidden");
+								$("#StatusAll").removeAttr("hidden");
+							}
+							else {
+								$("#StatusAll").attr("hidden","hidden");
+								$("#StatusAll2").removeAttr("hidden");
+							}
+							$("#StatusList").css("bottom","calc(" + $(this).parent().css("bottom") + " + 90px");
+							$("#StatusList").css("right",$(this).parent().css("right"));
+							$("#StatusList").animate({height:"600px"});
+						}
+					}
+					else {
+						if (this.id == "BtnAD") {
+							$("#StatusAll2").attr("hidden","hidden");
+							$("#StatusAll").removeAttr("hidden");
+						}
+						else {
+							$("#StatusAll").attr("hidden","hidden");
+							$("#StatusAll2").removeAttr("hidden");
+						}
+						$("#StatusList").css("height","0px")
+						$("#StatusList").css("bottom","calc(" + $(this).parent().css("bottom") + " + 90px");
+						$("#StatusList").css("right",$(this).parent().css("right"));
+						$("#StatusList").animate({height:"600px"});
+					}
+				}
+				temp2 = this.id;
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="mapArea">
+		<div id="Route">
+			<img src="/images/mapRoute.png">
+		</div>
+		<div id="mapIcon">
+			<div id="eavatar" hidden="hidden" class="eavatar" >
+				<img src="/images/ezrealS.png">
+			</div>
+			<div id="fbase">
+				<img src="/images/baseS.png">
+				<input type="button" name="base" id="btnfBase" class="mapBtn">
+				<img src="/images/BlackS.png" id="fbaseB" class="iconBlack">
+			</div>
+			<div id="fNexus">
+				<img src="/images/nexusS.png" id="fNexusM">
+				<input type="button" name="nexus" id="btnfNexus" class="mapBtn">
+				<img src="/images/BlackS.png" id="fnexusB" class="iconBlack">
+			</div>
+			<div id="fTower-top1">
+				<img name = "ftop" src="/images/towerS.png" id="fTower-top1M">
+				<input type="button" name="tower" id="btnfTower-top1" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowertop1B" class="iconBlack">
+			</div>
+			<div id="fTower-top2">
+				<img name = "ftop" src="./images/towerS.png" id="fTower-top2M">
+				<input type="button" name="tower" id="btnfTower-top2" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowertop2B" class="iconBlack">
+			</div>
+			<div id="fTower-top3">
+				<img name = "ftop" src="./images/towerS.png" id="fTower-top3M">
+				<input type="button" name="NormalHero" id="btnfTower-top3" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowertop3B" class="iconBlack">
+			</div>
+			<div id="fTower-mid1">
+				<img name = "fmid" src="./images/towerS.png" id="fTower-mid1M">
+				<input type="button" name="tower" id="btnfTower-mid1" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowermid1B" class="iconBlack">
+			</div>
+			<div id="fTower-mid2">
+				<img name = "fmid" src="./images/towerS.png" id="fTower-mid2M">
+				<input type="button" name="tower" id="btnfTower-mid2" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowermid2B" class="iconBlack">
+			</div>
+			<div id="fTower-mid3">
+				<img name = "fmid" src="./images/towerS.png" id="fTower-mid3M">
+				<input type="button" name="NormalHero" id="btnfTower-mid3" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowermid3B" class="iconBlack">
+			</div>
+			<div id="fTower-bot1">
+				<img name = "fbot" src="./images/towerS.png" id="fTower-bot1M">
+				<input type="button" name="tower" id="btnfTower-bot1" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowerbot1B" class="iconBlack">
+			</div>
+			<div id="fTower-bot2">
+				<img name = "fbot" src="./images/towerS.png" id="fTower-bot2M">
+				<input type="button" name="tower" id="btnfTower-bot2" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowerbot2B" class="iconBlack">
+			</div>
+			<div id="fTower-bot3">
+				<img name = "fbot" src="./images/towerS.png" id="fTower-bot3M">
+				<input type="button" name="NormalHero" id="btnfTower-bot3" class="mapBtn">
+				<img src="./images/BlackS.png" id="ftowerbot3B" class="iconBlack">
+			</div>
+			<div id="eBase">
+				<img src="./images/baseS.png">
+				<input type="button" name="base" id="btneBase" class="mapBtn">
+				<img src="./images/BlackS.png" hidden="hidden" id="ebaseB" class="baseBlack">
+			</div>
+			<div id="eNexus">
+				<img src="./images/nexusS.png" id="eNexusM"> 
+				<input type="button" name="nexus" id="btneNexus" class="mapBtn">
+				<img src="./images/BlackS.png" id="enexusB" class="iconBlack">
+			</div>
+			<div id="eTower-top1" name="e">
+				<img name = "etop" src="./images/towerS.png" id="eTower-top1M">
+				<input type="button" name="tower" id="btneTower-top1" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowertop1B" class="iconBlack">
+			</div>
+			<div id="eTower-top2" name="e">
+				<img name = "etop" src="./images/towerS.png" id="eTower-top2M">
+				<input type="button" name="tower" id="btneTower-top2" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowertop2B" class="iconBlack">
+			</div>
+			<div id="eTower-top3" name="e">
+				<img name = "etop" src="./images/towerS.png" id="eTower-top3M">
+				<input type="button" name="NormalHero" id="btneTower-top3" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowertop3B" class="iconBlack">
+			</div>
+			<div id="eTower-mid1" name="e">
+				<img name = "emid" src="./images/towerS.png" id="eTower-mid1M">
+				<input type="button" name="tower" id="btneTower-mid1" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowermid1B" class="iconBlack">
+			</div>
+			<div id="eTower-mid2" name="e">
+				<img name = "emid" src="./images/towerS.png" id="eTower-mid2M">
+				<input type="button" name="tower" id="btneTower-mid2" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowermid2B" class="iconBlack">
+			</div>
+			<div id="eTower-mid3" name="e">
+				<img name = "emid" src="./images/towerS.png" id="eTower-mid3M">
+				<input type="button" name="NormalHero" id="btneTower-mid3" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowermid3B" class="iconBlack">
+			</div>
+			<div id="eTower-bot1" name="e">
+				<img name = "ebot" src="./images/towerS.png" id="eTower-bot1M">
+				<input type="button" name="tower" id="btneTower-bot1" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowerbot1B" class="iconBlack">
+			</div>
+			<div id="eTower-bot2" name="e">
+				<img name = "ebot" src="./images/towerS.png" id="eTower-bot2M">
+				<input type="button" name="tower" id="btneTower-bot2" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowerbot2B" class="iconBlack">
+			</div>
+			<div id="eTower-bot3" name="e">
+				<img name = "ebot" src="./images/towerS.png" id="eTower-bot3M">
+				<input type="button" name="NormalHero" id="btneTower-bot3" class="mapBtn">
+				<img src="./images/BlackS.png" id="etowerbot3B" class="iconBlack">
+			</div>
+			<div id="fWolf" name="y">
+				<img src="./images/3wolfS.png" id="fWolfM">
+				<input type="button" name="3wolf" id="btnfWolf" class="mapBtn">
+				<img src="./images/BlackS.png" id="fwolfB" class="iconBlack">
+			</div>
+			<div id="fFrog" name="y">
+				<img src="./images/frogS.png" id="fFrogM">
+				<input type="button" name="frog" id="btnfFrog" class="mapBtn">
+				<img src="./images/BlackS.png" id="ffrogB" class="iconBlack">
+			</div>
+			<div id="fBlueB" name="y">
+				<img src="./images/blueBS.png" id="fBlueBM">
+				<input type="button" name="blueB" id="btnfblueB" class="mapBtn">
+				<img src="./images/BlackS.png" id="fbluebB"class="iconBlack">
+			</div>
+			<div id="eWolf" name="y">
+				<img src="./images/3wolfS.png" id="eWolfM">
+				<input type="button" name="3wolf" id="btneWolf" class="mapBtn">
+				<img src="./images/BlackS.png" id="ewolfB" class="iconBlack">
+			</div>
+			<div id="eFrog" name="y">
+				<img src="./images/frogS.png" id="eFrogM">
+				<input type="button" name="frog" id="btneFrog" class="mapBtn">
+				<img src="./images/BlackS.png" id="efrogB" class="iconBlack">
+			</div>
+			<div id="eBlueB" name="y">
+				<img src="./images/blueBS.png" id="eBlueBM">
+				<input type="button" name="blueB" id="btneBlueB" class="mapBtn">
+				<img src="./images/BlackS.png" id="ebluebB" class="iconBlack">
+			</div>
+			<div id="fRock" name="y">
+				<img src="./images/2rockS.png" id="fRockM">
+				<input type="button" name="2rock" id="btnf2rock" class="mapBtn">
+				<img src="./images/BlackS.png" id="frockB" class="iconBlack">
+			</div>
+			<div id="fBird" name="y">
+				<img src="./images/birdS.png" id="fBirdM">
+				<input type="button" name="bird" id="btnfBird" class="mapBtn">
+				<img src="./images/BlackS.png" id="fbirdB" class="iconBlack">
+			</div>
+			<div id="fRedB" name="y">
+				<img src="./images/redBS.png" id="fRedBM">
+				<input type="button" name="redB" id="btnfRedB" class="mapBtn">
+				<img src="./images/BlackS.png" id="fredbB" class="iconBlack">
+			</div>
+			<div id="eRock" name="y">
+				<img src="./images/2rockS.png" id="eRockM">
+				<input type="button" name="2rock" id="btne2rock" class="mapBtn">
+				<img src="./images/BlackS.png" id="erockB" class="iconBlack">
+			</div>
+			<div id="eBird" name="y">
+				<img src="./images/birdS.png" id="eBirdM">
+				<input type="button" name="bird" id="btneBird" class="mapBtn">
+				<img src="./images/BlackS.png" id="ebirdB" class="iconBlack">
+			</div>
+			<div id="eRedB" name="y">
+				<img src="./images/redBS.png" id="eRedBM">
+				<input type="button" name="redB" id="btneRedB" class="mapBtn">
+				<img src="./images/BlackS.png" id="eredbB" class="iconBlack">
+			</div>
+			<div id="baron" name="y">
+				<img src="./images/baronS.png" id="baronM">
+				<input type="button" name="baron" id="btnBaron" class="mapBtn">
+				<img src="./images/BlackS.png"  id="baronB" class="iconBlack">
+			</div>
+			<div id="dragon" name="y">
+				<img src="./images/dragonS.png" id="dragonM">
+				<input type="button" name="dragon" id="btnDragon" class="mapBtn">
+				<img src="./images/BlackS.png" id="dragonB" class="iconBlack">
+			</div>
+			<div id="avatar" class="avatar">
+				<img src="./images/KhazixS.png">
+			</div>
+			<div id="avatarL" class="avatar" hidden="hidden">
+				<img src="./images/ezrealSL.png">
+			</div>
+		</div>
+	</div>
+	<div id="menuArea">
+		<img src="./images/SkillArea.png">
+		<div id="scrollL">
+			<img src="./images/scrollLeft.png">
+			<img hidden="hidden" id="LLeft" src="./images/scrollRight.png">
+			<input type="button" name="N" id="BtnScrollL" class="btnSkill" value="擴展列表">
+		</div>
+		<div id="Weapon">
+			<img src="./images/btnW.png">
+			<input type="button" id="BtnW" class="btnSkill" value="投擲暗器">
+			<div id="WeaponPB" hidden="hidden">
+				<div id="WeaponPBar"></div>
+			</div>
+		</div>
+		<div id="pushL">
+			<img src="./images/btnPL.png">
+			<input type="button" id="BtnPL" class="btnSkill" value="掃蕩敵兵">
+			<div id="pushLPB" hidden="hidden">
+				<div id="pushLPBar"></div>
+			</div>
+		</div>
+		<div id="CC">
+			<img src="./images/btnCC.png">
+			<input type="button" id="BtnCC" class="btnSkill" value="近身壓制">
+			<div id="CCPB" hidden="hidden">
+				<div id="CCPBar"></div>
+			</div>
+		</div>
+		<div id="Ult">
+			<img src="./images/btnULT.png">
+			<input type="button" id="BtnULT" class="btnSkill" value="我原本不打算用這招的">
+			<div id="UltPB" hidden="hidden">
+				<div id="UltPBar"></div>
+			</div>
+		</div>
+		<div id="giveUp">
+			<img src="./images/btnGU.png">
+			<input type="button" id="BtnGU" class="btnSkill" value="投降">
+		</div>
+		<div id="List" hidden="hidden">
+			<div id="ListAll" hidden="hidden">
+				<div id="ListWild">
+					<img id="ListWildPic" src="/images/noone25090.png">
+					<input type="button" id="ListWildBtn" class="ListBtn" value="此區無野怪">
+				</div>
+				<div id="ListEHero">
+					<img id="ListEHeroPic" src="/images/noone25090.png">
+					<input type="button" id="ListEHeroBtn" class="ListBtn" value="此區無敵方線上英雄">
+				</div>
+				<div id="ListEAvatar">
+					<img id="ListEAvatarPic" src="/images/noone25090.png">
+					<input type="button" id="ListEAvatarBtn" class="ListBtn" value="此區無敵方英雄">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="statusArea">
+		<img src="./images/StatusArea.png">
+		<div id="scrollR">
+			<img src="./images/scrollRightL.png">
+			<img hidden="hidden" id="RRight" src="./images/scrollLeftL.png">
+			<input type="button" name="N" id="BtnScrollR" class="btnStatus" value="擴展列表">
+		</div>
+		<div id="AreaData">
+			<img src="./images/areaDataL.png">
+			<input type="button" id="BtnAD" class="btnStatus" value="偵查生物">
+		</div>
+		<div id="AreaEnemy">
+			<img src="./images/areaEnemyL.png">
+			<input type="button" id="BtnAE" class="btnStatus" value="偵查地形">
+		</div>
+		<div id="StatusList" hidden="hidden">
+			<div id="StatusAll2" hidden="hidden">
+				<img id="statusImg" src="/images/base300300.png">
+				<div id="nameDataArea">
+					<label id="towerData">『祕法基地』</label>
+				</div>
+				<div id="storyDataArea">
+					<label id="story">　　位於祕法核心附近的地區被設置為基地，其能夠汲取數量龐大祕法來治癒友軍，也能夠用甚至媲美赤龍之火的祕法光線擊殺入侵基地之敵，不會有敵軍會想要踏進這裡一步的。</label>
+				</div>
+			</div>
+			<div id="StatusAll" hidden="hidden">
+				<div id="AvatarData">
+					<img id="AvatarPic" src="./images/Khazix30090.png">
+					<label id="AvatarStatus"> 『Kha'Zix』 等級:1 血量:600 </label>
+				</div>
+				<div id="EAvatarData">
+					<img id="EAvatarPic" src="./images/noone30090.png">
+					<label id="EAvatarStatus"> 此區無敵方英雄 </label>
+				</div>
+				<div id="WildData">
+					<img id="WildPic" src="./images/noone30090.png">
+					<label id="WildStatus"> 此區無野怪或線上英雄 </label>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

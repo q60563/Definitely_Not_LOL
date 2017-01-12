@@ -1,0 +1,76 @@
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>註冊</title>
+		<link rel='stylesheet' type='text/css' href='/css/signup.css'>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script>
+			var request = function(data,method,uri){
+				$.ajax({
+						type : method,
+          	dataType: "json",
+          	url: window.location.origin+uri,
+					  contentType : 'application/json',
+						data : JSON.stringify(data),
+						success : function(msg, status, xhr){
+							if(msg.statusCode===200){
+								return window.location.pathname="/auth/login";
+							}
+							if(msg.message==="Don't enter empty or root." || msg.message==="This account already exists."){
+								$("#errorInputEmail").show();
+							}else if(msg.message==="Don't enter empty or root." || msg.message==="This account already exists."){
+								$("#errorInputUsername").show();
+							}
+						},
+						error : function(xhr, ajaxOptions, thrownError){ 
+							alert(xhr.status); 
+            	alert(ajaxOptions);
+            	alert(thrownError);
+						}
+					});
+			}
+			$(document).ready(function(){
+				$("#btmSignup").click(function(){
+					var data = {
+						email : $("#email").val(),
+						password : $("#password").val(),
+						username : $("#username").val()
+					}
+					request(data,"post","/auth/register");
+				});
+				$("#return").click(function(){
+					window.location.pathname="/auth/login";
+				});
+			});
+		</script>
+  </head>
+
+  <body>
+    <form id="signup">
+			<div id="nameArea">
+				<img id="Img" src="/images/inputbg.png">
+				<input type="text" id="username" name="username" class="text" placeholder="請輸入暱稱">
+			</div>
+			<div id="acArea">
+				<img id="Img" src="/images/inputbg.png">
+				<input type="text" id="email" name="email" class="text" placeholder="請輸入E-Mail">
+			</div>
+			<div id="pswArea">
+				<img id="Img" src="/images/inputbg.png">
+				<input type="text" id="password" name="password" class="text" placeholder="請輸入密碼">
+			</div>
+			<div id="msgArea">
+				<label id="errorInputEmail" hidden="hidden">格式錯誤，或此Email已被使用</label>
+				<label id="errorInputUsername" hidden="hidden">格式錯誤，或此暱稱已被使用</label>
+			</div>
+			<div id="btmArea">
+				<input type="button" id="btmSignup" class="btn" value="註冊">
+			</div>
+		</form>
+		<form id="return">
+				<input type="button" class="btn" value="返回">
+		</form>
+  </body>
+
+</html>

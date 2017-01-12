@@ -1,0 +1,23 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>首頁</title>
+	<link rel='stylesheet' type='text/css' href='/css/index.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$("#enterGame").click(function(){
+          window.location.pathname = "/auth/login";
+				});
+			});
+		</script>
+</head>
+
+<body>
+  <form id="entrance">
+    <input type="button" id="enterGame" value="登入遊戲">
+  </form>
+</body>
+
+</html>

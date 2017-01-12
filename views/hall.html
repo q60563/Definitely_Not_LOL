@@ -1,0 +1,78 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>大廳</title>
+	<link rel='stylesheet' type='text/css' href='/css/hall.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>-->
+
+	<script>
+	  var request = function(method, uri, arrive){
+      $.ajax({
+          type : method,
+          dataType: "json",
+          url: window.location.origin+uri,
+          contentType : 'application/json',
+          success : function(msg, status, xhr){
+            if(arrive=="deleteData") return;
+            if(msg.statusCode===200){
+              alert(JSON.stringify(msg.message));
+              return window.location.pathname=arrive;
+            }else if(msg.message==="Room already full."){
+              $("#errorInput").show();
+            }else{
+              return window.location.pathname=arrive;
+            }
+          },
+          error : function(xhr, ajaxOptions, thrownError){ 
+            alert(xhr.status); 
+            alert(ajaxOptions);
+            alert(thrownError); 
+          }
+        });
+    }
+    $(document).ready(function(){
+      request("get","/game/overGameDeleteData","deleteData");
+		  $("#btmLogout").click(function(){
+        request("post","/auth/logout","");
+		  });
+      $("#btmEnterRoom").click(function(){
+        request("post","/room/enter","/room/enter");
+		  });
+      $("#btmRefreshToken").click(function(){
+        request("put","/token/refresh","/room");
+		  });
+      $("#btmRecord").click(function(){
+        window.location.pathname="/record";
+		  });
+      $("#btmRename").click(function(){
+        window.location.pathname="/auth/rename";
+		  });
+    });
+	</script>
+</head>
+
+<body>
+  <form style="display:inline">
+    <div id="enter">
+	  <input type="button" id="btmEnterRoom" value="進入房間"/>
+      <label id="errorInput" hidden="hidden">房間人數已滿</label>
+		</div>
+    <div id="logout">
+			<input type="button" id="btmLogout" value="登出"/>
+		</div>
+    <div id="refresh">
+			<input type="button" id="btmRefreshToken" value="更新Token"/>
+		</div>
+    <div id="record">
+			<input type="button" id="btmRecord" value="對戰紀錄"/>
+		</div>
+    <div id="rename">
+			<input type="button" id="btmRename" value="修改使用者名稱"/>
+		</div>
+  </form>
+       
+</body>
+
+</html>
